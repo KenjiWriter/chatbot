@@ -1,7 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
-
+session_start();
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -9,17 +8,22 @@ class ChatController extends Controller
     function getData()
     {
         $text = $_GET['text'];
+        $text = strtolower($text);
 
-        switch($text) 
-        {
-            case 'hi':
-                $replay= 'hello there!';
-                echo $replay;
-                break;
-            default:
-                $replay= 'Sorry im not able to understand you!';
-                echo $replay;
-                break;
+        if (strpos($text, 'my name is') === FALSE) {
+         } else { 
+            $search = 'my name is' ;
+            $name = str_replace($search, ' ', $text);
+            $name = ucwords($name);
+            $replay= 'ohh what a cool name, i will remember it!';
+            $_SESSION['name'] = $name;
+            return $replay;
         }
+
+        if (strpos($text, 'whats my name') === FALSE) {
+        } else {
+           $replay= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
+           return $replay;
+       }
     }
 }
