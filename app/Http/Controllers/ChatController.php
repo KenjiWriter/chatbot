@@ -20,10 +20,24 @@ class ChatController extends Controller
             return $replay;
         }
 
-        if (strpos($text, 'whats my name') === FALSE) {
-        } else {
-           $replay= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
-           return $replay;
+       switch($text) 
+       {
+           case strpos($text,'hi'):
+                if(isset($_SESSION['name'])){
+                    $replay= $_SESSION['name']." what's up?";
+                } else {
+                    $replay= 'HI, im chatbot, wanna tell me your name?';
+                }
+                return $replay;
+               break;
+            case strpos($text,'whats my name'):
+                $replay= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
+                return $replay;
+                break;
+           default:
+               $replay= 'Sorry im not able to understand you!';
+               return $replay;
+               break;
        }
     }
 }
