@@ -5,8 +5,14 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    function ask($question, $reply) {
-
+    function remove_session($type) {
+        if($type == 'all') {
+            session_destroy();
+        }
+        if($type == 'questions') {
+            unset($_SESSION['question']);
+            unset($_SESSION['nr2_question']);
+        }
     }
     function getData()
     {
@@ -22,7 +28,7 @@ class ChatController extends Controller
                 if(empty($name)){
                     $reply= "You don't have a name? or just trying to trick me? not this time. <br>";
                     echo $reply;
-                    $reply= "Can you give me your name again?";
+                    $reply= "Can you give me your name again? [Yes/No]";
                     $_SESSION['question'] = 'name';
                     return $reply;
                 }
@@ -35,7 +41,7 @@ class ChatController extends Controller
             $question= $_SESSION['question'];
 
             if($question= 'name'){
-                if($text == 'yes' or 'sure'){
+                if($text == 'yes' || 'sure'){
                     unset($_SESSION['question']);
                     $reply= 'Ok then type your name.';
                     $_SESSION['nr2_question'] = 'name';
@@ -77,13 +83,14 @@ class ChatController extends Controller
        {
            case strpos($text,'hi'):
                 if(isset($_SESSION['name'])){
-                    $reply= $_SESSION['name']." what's up?";
+                    $reply= 'Hi, '.$_SESSION['name']." what's up?";
                 } else {
-                    $reply= 'HI, im chatbot, wanna tell me your name?';
+                    $reply= 'HI, im chatbot';
                 }
                 return $reply;
                break;
             case strpos($text,'whats my name'):
+                $this->remove_session('questions');
                 if(isset($_SESSION['name'])){
                     $reply= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
                     return $reply;
@@ -92,14 +99,18 @@ class ChatController extends Controller
                 $reply= "You didnt told me your name yet.";
                 return $reply;
                 break;
-            case 'question':
-                if(isset($_SESSION['question'])){
-                    return $_SESSION['question'];
-                    break;
-                } else {
-                    return 'No question in que';
-                    break;
-                }
+            case strpos($text,'what day is it today'):
+                $reply= "Today is " . date("l");
+                return $reply;
+                break;
+            case strpos($text,'what date is today'):
+                $reply= "Today is " . date("Y/m/d");
+                return $reply;
+                break;
+            case strpos($text,'what time is it now'):
+                $reply= "now it's " . date("H-i");
+                return $reply;
+                break;
            default:
                $reply= 'Sorry im not able to understand you!';
                return $reply;
