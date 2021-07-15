@@ -12,7 +12,7 @@
 <body>
     <fieldset>
         <legend>Chatbot by Wenzzi [Alpha 0.0.1]</legend>
-        <div class="wrapper" align="center">
+        <div class="wrapper" align="center" >
             <div class="form">
                 <div class="bot-inbox inbox">
                     <div class="icon">

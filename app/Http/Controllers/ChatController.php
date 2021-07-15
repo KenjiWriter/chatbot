@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
+    function ask($question, $reply) {
+
+    }
     function getData()
     {
         $text = $_GET['text'];
@@ -15,28 +18,91 @@ class ChatController extends Controller
             $search = 'my name is' ;
             $name = str_replace($search, ' ', $text);
             $name = ucwords($name);
-            $replay= 'ohh what a cool name, i will remember it!';
+            $name = preg_replace('/\s+/', '', $name);
+                if(empty($name)){
+                    $reply= "You don't have a name? or just trying to trick me? not this time. <br>";
+                    echo $reply;
+                    $reply= "Can you give me your name again?";
+                    $_SESSION['question'] = 'name';
+                    return $reply;
+                }
+            $reply= 'ohh what a cool name, i will remember it!';
             $_SESSION['name'] = $name;
-            return $replay;
+            return $reply;
         }
 
-       switch($text) 
+        if(isset($_SESSION['question'])){
+            $question= $_SESSION['question'];
+
+            if($question= 'name'){
+                if($text == 'yes' or 'sure'){
+                    unset($_SESSION['question']);
+                    $reply= 'Ok then type your name.';
+                    $_SESSION['nr2_question'] = 'name';
+                    return $reply;
+                } else {
+                    unset($_SESSION['question']);
+                }
+            }
+            if($question= 'insert_name') {
+                $name = ucwords($text);
+                $name = preg_replace('/\s+/', '', $name);
+                if(empty($name)){
+                    unset($_SESSION['question']);
+                    return 'Again...?';
+                } else {
+                    unset($_SESSION['question']);
+                    $_SESSION['name']= $name;
+                    return 'Oh cool name, i will remember it!';
+                }
+            }
+        }
+        if(isset($_SESSION['nr2_question'])){
+            $question= $_SESSION['nr2_question'];
+            if($question= 'name') {
+                $name = ucwords($text);
+                $name = preg_replace('/\s+/', '', $name);
+                if(empty($name)){
+                    unset($_SESSION['nr2_question']);
+                    return 'Again...?';
+                } else {
+                    unset($_SESSION['nr2_question']);
+                    $_SESSION['name']= $name;
+                    return 'Oh cool name, i will remember it!';
+                }
+            }
+        }
+       
+        switch($text) 
        {
            case strpos($text,'hi'):
                 if(isset($_SESSION['name'])){
-                    $replay= $_SESSION['name']." what's up?";
+                    $reply= $_SESSION['name']." what's up?";
                 } else {
-                    $replay= 'HI, im chatbot, wanna tell me your name?';
+                    $reply= 'HI, im chatbot, wanna tell me your name?';
                 }
-                return $replay;
+                return $reply;
                break;
             case strpos($text,'whats my name'):
-                $replay= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
-                return $replay;
+                if(isset($_SESSION['name'])){
+                    $reply= 'Your name is '.$_SESSION['name'].'. see? i told ya i will remeber it ;)';
+                    return $reply;
+                    break;
+                }
+                $reply= "You didnt told me your name yet.";
+                return $reply;
                 break;
+            case 'question':
+                if(isset($_SESSION['question'])){
+                    return $_SESSION['question'];
+                    break;
+                } else {
+                    return 'No question in que';
+                    break;
+                }
            default:
-               $replay= 'Sorry im not able to understand you!';
-               return $replay;
+               $reply= 'Sorry im not able to understand you!';
+               return $reply;
                break;
        }
     }
