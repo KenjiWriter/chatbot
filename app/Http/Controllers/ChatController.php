@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 session_start();
+use App\Models\questions;
+use DB;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -14,10 +16,20 @@ class ChatController extends Controller
             unset($_SESSION['nr2_question']);
         }
     }
+    
     function getData()
     {
         $text = $_GET['text'];
         $text = strtolower($text);
+
+        if(questions::where('question', 'like', "%$text%")->count() > 0) {
+            $questions= questions::where('question', 'like', "%$text%")->get();
+            foreach($questions as $question){
+                return $question['answer'];
+            }
+        } else {
+            return 'Sorry! im not able to understand you!';
+        }
 
         if (strpos($text, 'my name is') === FALSE) {
          } else { 
